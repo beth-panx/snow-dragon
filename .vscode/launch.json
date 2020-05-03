@@ -1,0 +1,11 @@
+{
+	"type": "node",
+	"request": "attach",
+	"name": "Attach",
+	"port": 5858,
+	"sourceMaps": true,
+	"outFiles": [
+			"${workspaceRoot}/dist/**/*.js"
+	],
+	"remoteRoot": "${workspaceRoot}/src/"
+}

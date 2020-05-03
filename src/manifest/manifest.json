@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-app-schema/preview/DevPreview/MicrosoftTeams.schema.json",
+  "manifestVersion": "devPreview",
+  "id": "3b7c8590-8bfb-11ea-8b31-69670952d273",
+  "version": "0.0.1",
+  "packageName": "snowdragon",
+  "developer": {
+    "name": "beth-panx",
+    "websiteUrl": "https://{{HOSTNAME}}",
+    "privacyUrl": "https://{{HOSTNAME}}/privacy.html",
+    "termsOfUseUrl": "https://{{HOSTNAME}}/tou.html"
+  },
+  "name": {
+    "short": "Snow Dragon",
+    "full": "Snow Dragon"
+  },
+  "description": {
+    "short": "TODO: add short description here",
+    "full": "TODO: add full description here"
+  },
+  "icons": {
+    "outline": "icon-outline.png",
+    "color": "icon-color.png"
+  },
+  "accentColor": "#D85028",
+  "configurableTabs": [
+    {
+      "configurationUrl": "https://{{HOSTNAME}}/snowDragonTab/config.html",
+      "canUpdateConfiguration": true,
+      "scopes": [
+        "team",
+        "groupchat"
+      ]
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "cf65f840-8bfb-11ea-8b31-69670952d273",
+      "name": "About Bot",
+      "contentUrl": "https://{{HOSTNAME}}/snowDragonBot/aboutBot.html",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "bots": [
+    {
+      "botId": "{{MICROSOFT_APP_ID}}",
+      "needsChannelSelector": true,
+      "isNotificationOnly": false,
+      "scopes": [
+        "team",
+        "personal",
+        "groupchat"
+      ],
+      "supportsCalling": true,
+      "supportsVideo": true,
+      "commandLists": [
+        {
+          "scopes": [
+            "team",
+            "personal"
+          ],
+          "commands": [
+            {
+              "title": "Help",
+              "description": "Shows help information"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "connectorId": "{{CONNECTOR_ID}}",
+      "configurationUrl": "https://{{HOSTNAME}}/snowDragonConnector/config.html",
+      "scopes": [
+        "team"
+      ]
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "{{MICROSOFT_APP_ID}}",
+      "canUpdateConfiguration": true,
+      "commands": [
+        {
+          "id": "snowDragonMessageExtension",
+          "title": "Snow Dragon Message Extension",
+          "description": "Add a clever description here",
+          "initialRun": true,
+          "type": "action",
+          "context": [
+            "compose",
+            "commandBox",
+            "message"
+          ],
+          "fetchTask": true
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "{{HOSTNAME}}"
+  ],
+  "webApplicationInfo": {
+    "id": "{{SNOWDRAGONTAB_APP_ID}}",
+    "resource": "{{SNOWDRAGONTAB_APP_URI}}"
+  }
+}
