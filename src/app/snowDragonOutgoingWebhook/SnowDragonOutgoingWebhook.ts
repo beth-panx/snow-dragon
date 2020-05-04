@@ -13,8 +13,6 @@ const incomingQueue =  Array<{ id: string | undefined; text: string; from: strin
  */
 @OutgoingWebhookDeclaration("/api/webhook")
 export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
-
-
     /**
      * The constructor
      */
@@ -49,22 +47,29 @@ export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
 
             if (msgHash === auth) {
                 // Message was ok and verified
-                log("1 " + (incoming.text === "Snow Dragon Next question"));
-                log("2 " + (incoming.text === "<at>Snow Dragon</at>&nbsp;Next question"));
-                log("3 " + (incoming.text === "<at>Snow Dragon</at> Next question"));
 
                 log("incoming: " + typeof(incoming.text));
                 log("queue: " + JSON.stringify(incomingQueue));
-
-                if (incoming.text === "<at>Snow Dragon</at>&nbsp;Next question") {
+                const searchVal = "next question";
+                let followupText = `You have reached the end of the question queue. Yay! 🙌`;
+                if ((incoming.text.toLowerCase().includes(searchVal))) {
                     // dequeue incomingQueue
                     if (incomingQueue.length > 0) {
                         const nextQ = incomingQueue.shift();
                         if (nextQ) {
-                            message.text = `From: ${nextQ.from}</b>Question: ${nextQ.text}`;
+                            // replace @Snow Dragon
+                            const nextQText = nextQ.text.replace(/<at>Snow Dragon<\/at> ?/g, "");
+                            const numberQLeft = incomingQueue.length;
+                            if (numberQLeft > 0) {
+                                followupText = `You have ${numberQLeft} more questions in the queue.`;
+                            }
+                            message.text = `🤓From: @${nextQ.from}\n\n🦒Question: ${nextQText}\n\n👀${followupText}`;
+
                         } else {
-                            message.text = `No more questions. At the end of queue.`;
+                            message.text = `${followupText}`;
                         }
+                    } else {
+                        message.text = `${followupText}`;
                     }
                 } else {
                     // enqueue incomingQueue
