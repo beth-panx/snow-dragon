@@ -4,15 +4,29 @@ import * as crypto from "crypto";
 import * as debug from "debug";
 import { OutgoingWebhookDeclaration, IOutgoingWebhook } from "express-msteams-host";
 import { stringLiteralsArray } from "@fluentui/react";
+import { CosmosClient } from "@azure/cosmos";
+
+const endpoint = process.env.COSMOS_ENDPOINT || "";
+const key = process.env.COSMOS_Key || "";
+const client = new CosmosClient({ endpoint, key });
 
 const log = debug("msteams");
 const incomingQueue =  Array<{ id: string | undefined; text: string; from: string }>();
+async function createDb() {
+    try {
+        const { database } = await client.databases.createIfNotExists({ id: "AHAHAH Database" });
+        log(database.id);
+    } catch (e) {
+        log("ERROR creating database: " + e);
+    }
+}
 
 /**
  * Implementation for Snow Dragon Outgoing Webhook
  */
 @OutgoingWebhookDeclaration("/api/webhook")
 export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
+
     /**
      * The constructor
      */
@@ -26,7 +40,7 @@ export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
      * @param next
      */
 
-    public requestHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public async requestHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
         // parse the incoming message
         const incoming = req.body as builder.Activity;
 
@@ -34,6 +48,9 @@ export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
         const message: Partial<builder.Activity> = {
             type: builder.ActivityTypes.Message
         };
+
+        // TODO: get channel id from graph
+        const someUniqueId = "test";
 
         const securityToken = process.env.SECURITY_TOKEN;
         if (securityToken && securityToken.length > 0) {
@@ -48,8 +65,11 @@ export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
             if (msgHash === auth) {
                 // Message was ok and verified
 
-                log("incoming: " + typeof(incoming.text));
+                log("incoming: " + JSON.stringify(incoming));
                 log("queue: " + JSON.stringify(incomingQueue));
+
+                // TODO: connect to cosmos db
+                createDb();
                 const searchVal = "next question";
                 let followupText = `You have reached the end of the question queue. Yay! 🙌`;
                 if ((incoming.text.toLowerCase().includes(searchVal))) {
@@ -72,13 +92,16 @@ export class SnowDragonOutgoingWebhook implements IOutgoingWebhook {
                         message.text = `${followupText}`;
                     }
                 } else {
-                    // enqueue incomingQueue
+                    // enqueue incomingQueue in memory
                     const item = {
                         id: incoming.id,
                         text: incoming.text,
                         from: incoming.from.name
                     };
                     incomingQueue.push(item);
+
+                    // TODO: add to blob
+
                     message.text = `Your request has been added to a queue. We will notify you when it's your turn to speak. 😎`;
                 }
             } else {
