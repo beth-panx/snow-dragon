@@ -45,7 +45,7 @@
   ],
   "bots": [
     {
-      "botId": "{{MICROSOFT_APP_ID}}",
+      "botId": "e8e8e6e1-f479-4afb-a6a9-2c7a9c3ecc1f",
       "needsChannelSelector": true,
       "isNotificationOnly": false,
       "scopes": [

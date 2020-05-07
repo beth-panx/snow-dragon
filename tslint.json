@@ -25,7 +25,8 @@
                 "trace"
             ]
         },
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "indent": [true, "spaces", 4]
     },
     "jsRules": {
         "max-line-length": {
